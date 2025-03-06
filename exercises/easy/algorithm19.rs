@@ -12,8 +12,41 @@
 use std::fmt::{self, Display, Formatter};
 
 pub fn fib(n: i32) -> i32 {
-    // TODO: Implement the logic to calculate the nth Fibonacci number using matrix exponentiation
-    0 // Placeholder return value
+    if n == 0 {
+        return 0;
+    }
+    if n == 1 {
+        return 1;
+    }
+    let base = [[1, 1], [1, 0]];
+    let result = matrix_pow(base, n - 1);
+    result[0][0]
+}
+
+/// 计算 2x2 矩阵相乘
+fn matrix_mult(a: [[i32; 2]; 2], b: [[i32; 2]; 2]) -> [[i32; 2]; 2] {
+    let mut c = [[0, 0], [0, 0]];
+    for i in 0..2 {
+        for j in 0..2 {
+            for k in 0..2 {
+                c[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }
+    c
+}
+
+/// 计算矩阵 m 的 exp 次幂，采用快速幂算法
+fn matrix_pow(mut m: [[i32; 2]; 2], mut exp: i32) -> [[i32; 2]; 2] {
+    let mut result = [[1, 0], [0, 1]]; // 单位矩阵
+    while exp > 0 {
+        if exp % 2 == 1 {
+            result = matrix_mult(result, m);
+        }
+        m = matrix_mult(m, m);
+        exp /= 2;
+    }
+    result
 }
 
 #[cfg(test)]

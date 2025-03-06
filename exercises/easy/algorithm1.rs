@@ -70,14 +70,40 @@ impl<T> LinkedList<T> {
         }
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
-        }
-	}
+	where
+    T: PartialOrd,
+{
+    let mut list_c = LinkedList::new();
+    let mut ptr_a = list_a.start;
+    let mut ptr_b = list_b.start;
+
+    while ptr_a.is_some() || ptr_b.is_some() {
+        let next_node = match (ptr_a, ptr_b) {
+            (Some(a), Some(b)) => {
+                if unsafe { a.as_ref().val <= b.as_ref().val } {
+                    ptr_a = unsafe { a.as_ref().next };
+                    a
+                } else {
+                    ptr_b = unsafe { b.as_ref().next };
+                    b
+                }
+            }
+            (Some(a), None) => {
+                ptr_a = unsafe { a.as_ref().next };
+                a
+            }
+            (None, Some(b)) => {
+                ptr_b = unsafe { b.as_ref().next };
+                b
+            }
+            (None, None) => break,
+        };
+
+        list_c.add(unsafe { Box::from_raw(next_node.as_ptr()).val });
+    }
+
+    list_c
+}
 }
 
 impl<T> Display for LinkedList<T>

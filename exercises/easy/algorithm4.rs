@@ -50,13 +50,24 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        match self.root {
+            Some(ref mut node) => {
+                // If the root exists, delegate the insertion to the TreeNode's insert method
+                node.insert(value);
+            }
+            None => {
+                // If the root is None, create a new TreeNode and set it as the root
+                self.root = Some(Box::new(TreeNode::new(value)));
+            }
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-        //TODO
-        true
+        match &self.root {
+            Some(node) => node.search(value),
+            None => false, // If the tree is empty, return false
+        }
     }
 }
 
@@ -64,9 +75,54 @@ impl<T> TreeNode<T>
 where
     T: Ord,
 {
-    // Insert a node into the tree
     fn insert(&mut self, value: T) {
-        //TODO
+        match value.cmp(&self.value) {
+            Ordering::Less => {
+                // If the value is less than the current node's value, insert into the left subtree
+                match self.left {
+                    Some(ref mut left_node) => left_node.insert(value),
+                    None => {
+                        self.left = Some(Box::new(TreeNode::new(value)));
+                    }
+                }
+            }
+            Ordering::Greater => {
+                // If the value is greater than the current node's value, insert into the right subtree
+                match self.right {
+                    Some(ref mut right_node) => right_node.insert(value),
+                    None => {
+                        self.right = Some(Box::new(TreeNode::new(value)));
+                    }
+                }
+            }
+            Ordering::Equal => {
+                // If the value is equal to the current node's value, do nothing (no duplicates)
+            }
+        }
+    }
+
+    // Search for a value in the tree
+    fn search(&self, value: T) -> bool {
+        match value.cmp(&self.value) {
+            Ordering::Less => {
+                // If the value is less than the current node's value, search the left subtree
+                match &self.left {
+                    Some(left_node) => left_node.search(value),
+                    None => false,
+                }
+            }
+            Ordering::Greater => {
+                // If the value is greater than the current node's value, search the right subtree
+                match &self.right {
+                    Some(right_node) => right_node.search(value),
+                    None => false,
+                }
+            }
+            Ordering::Equal => {
+                // If the value is equal to the current node's value, return true
+                true
+            }
+        }
     }
 }
 

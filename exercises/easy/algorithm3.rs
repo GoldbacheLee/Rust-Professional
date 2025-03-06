@@ -5,8 +5,32 @@
 */
 
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T: Ord>(array: &mut [T]) {
+    if array.len() > 1 {
+        quick_sort(array);
+    }
+}
+
+fn quick_sort<T: Ord>(array: &mut [T]) {
+    if array.len() <= 1 {
+        return;
+    }
+    let pivot_index = partition(array);
+    quick_sort(&mut array[0..pivot_index]);
+    quick_sort(&mut array[pivot_index + 1..]);
+}
+
+fn partition<T: Ord>(array: &mut [T]) -> usize {
+    let pivot_index = array.len() - 1;
+    let mut i = 0;
+    for j in 0..pivot_index {
+        if array[j] < array[pivot_index] {
+            array.swap(i, j);
+            i += 1;
+        }
+    }
+    array.swap(i, pivot_index);
+    i
 }
 #[cfg(test)]
 mod tests {
